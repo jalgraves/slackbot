@@ -1,0 +1,6 @@
+.DS_store
+__pycache__
+slackbot/__pycache__/
+slackbot/libs/__pycache__/
+mypy/
+*.pyc

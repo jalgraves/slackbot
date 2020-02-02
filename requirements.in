@@ -1,0 +1,4 @@
+mypy
+nose
+slackclient>=2.5.0
+boto3

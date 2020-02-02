@@ -1,0 +1,94 @@
+{
+    "botnames": ["slackbot"],
+    "commands": {
+        "stop": {
+            "slack_message": "*Stopping Bot*"
+        },
+        "k8s": {
+            "options": ["delete", "deploy", "update", "show"],
+            "valid_args": {
+                "microservice": {
+                    "type": "string",
+                    "short": "m"
+                },
+                "branch": {
+                    "type": "string",
+                    "short": "b"
+                },
+                "env": {
+                    "type": "string",
+                    "short": "e"
+                },
+                "deploy-name": {
+                    "type": "string",
+                    "short": "d"
+                },
+                "config-branch": {
+                    "type": "string",
+                    "short": "c"
+                },
+                "region": {
+                    "type": "string",
+                    "short": "r"
+                },
+                "image-tag": {
+                    "type": "string",
+                    "short": "i"
+                },
+                "frontend": {
+                    "type": "flag",
+                    "short": "ui"
+                }
+            },
+            "slack_replies": {
+                "delete": {
+                    "start": "*Deleting Deployment `{}`*",
+                    "complete": "*`{}` Deployment Deleted*"
+                },
+                "deploy": {
+                    "start": "*K8s Deployment `{}` Started*",
+                    "complete": "*Deployment `{}` Complete*"
+                },
+                "update": {
+                    "start": "*Updating Deployment `{}`*",
+                    "complete": "*`{}` Deployment Updated*"
+                },
+                "show": {
+                    "start": "*K8s Deployment `{}`*",
+                    "complete": "```{}```"
+                }
+            }
+        },
+        "aws": {
+            "options": ["restart", "shutdown", "start"],
+            "valid_args": {
+                "instance": {
+                    "type": "string",
+                    "short": "i"
+                },
+                "region": {
+                    "type": "string",
+                    "short": "r"
+                }
+            },
+            "slack_replies": {
+                "restart": {
+                    "start": "*Restarting Instance `{}`*",
+                    "complete": "*`{}` Instance Restart Complete*"
+                },
+                "shutdown": {
+                    "start": "*Shutting Down Instance `{}`*",
+                    "complete": "*`{}` Instance Shut Down Complete*"
+                },
+                "start": {
+                    "start": "*Starting Instance `{}`*",
+                    "complete": "*`{}` Instance Started*"
+                }
+            }
+        },
+        "help": {
+            "options": ["k8s", "aws", "stop"],
+            "valid_args": {}
+        }
+    }
+}
