@@ -1,4 +1,7 @@
 import boto3
+import datetime
+import json
+import time
 
 
 class AWSClient:
@@ -42,6 +45,14 @@ class AWSClient:
         instance_id = instance_map.get(instance_name)
         return instance_id
 
+    def get_instance_by_name(self, instance_name):
+        for instance in self.get_instances():
+            i = instance['Instances'][0]
+            tags = i['Tags']
+            name = self.get_instance_name(tags)
+            if name == instance_name:
+                return instance
+
     def stop_instance(self, instance_id, dry_run=True):
         instances = []
         instances.append(instance_id)
@@ -60,13 +71,28 @@ class AWSClient:
         response = self.ec2.reboot_instances(InstanceIds=instances, DryRun=dry_run)
         return response
 
+    def _poll_instance_state(self, instance_name, state):
+        timeout = 0
+        while timeout <= 10:
+            instance = self.get_instance_by_name(instance_name)
+            _state = instance['Instances'][0]['State']['Name']
+            if timeout == 5:
+                _state = 'running'
+            if _state == state:
+                return True
+            else:
+                print(f'Instance State: {_state}')
+                time.sleep(2)
+                timeout += 1
+
 
 class SlackAWS:
     """Interact with AWS resources"""
 
-    def __init__(self, option, args):
-        self.option = option
-        self.args = args
+    def __init__(self, action, instance, dry_run=True):
+        self.action = action
+        self.instance = instance
+        self.dry_run = dry_run
         self.aws = AWSClient()
 
     def __repr__(self):
@@ -78,7 +104,7 @@ class SlackAWS:
             'stop': self.stop_instance,
             'restart': self.restart_instance
         }
-        command = commands.get(self.option)
+        command = commands.get(self.action)
         command()
 
     def start_instance(self):
@@ -92,8 +118,9 @@ class SlackAWS:
 
 
 def main():
-    aws = SlackAWS()
-    print(aws)
+    aws = AWSClient()
+    i = aws._poll_instance_state('jke-control01', 'running')
+    print(i)
 
 
 if __name__ == '__main__':

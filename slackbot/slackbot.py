@@ -24,7 +24,7 @@ def _config() -> dict:
     return config
 
 
-def _bot_check(text: str) -> bool:
+def _bot_check(text: str) -> str:
     botnames = CONFIG['botnames']
     bot = False
     if text.split()[0] in botnames:
