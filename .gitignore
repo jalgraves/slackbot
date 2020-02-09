@@ -4,3 +4,4 @@ slackbot/__pycache__/
 slackbot/libs/__pycache__/
 mypy/
 *.pyc
+.mypy_cache/

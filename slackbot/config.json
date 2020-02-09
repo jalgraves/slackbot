@@ -69,6 +69,14 @@
                 "region": {
                     "type": "string",
                     "short": "r"
+                },
+                "dry-run": {
+                    "type": "flag",
+                    "short": "dr"
+                },
+                "commit": {
+                    "type": "flag",
+                    "short": "c"
                 }
             },
             "slack_replies": {

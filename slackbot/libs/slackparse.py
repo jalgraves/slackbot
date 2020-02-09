@@ -1,5 +1,6 @@
-import re
+import json
 import logging
+import re
 import sys
 
 
@@ -16,7 +17,7 @@ class SlackArgParse:
         self.text = text
         self.args = self.parse_args(self.cmd_args, self.text)
         self.option = self.parse_option(self.text)
-        self.parse_flags(self.cmd_args, self.text)
+        # self.flags = self.parse_flags(self.cmd_args, self.text)
 
     def parse_args(self, cmd_args, text):
         """Parse command arguments"""
@@ -36,10 +37,16 @@ class SlackArgParse:
                 args[k] = self.format_args(cmd_args[k]["type"], arg)
             else:
                 args[k] = False
+        for k, v in cmd_args.items():
+            if cmd_args[k]["type"] == "flag":
+                if re.search(r'.*--{}.*'.format(k), text):
+                    args[k] = True
         logging.info(f'SlackArgPargs - ARGS:\n{args}')
         return args
 
     def parse_flags(self, cmd_args, text):
+        print(cmd_args)
+        print(text)
         for k, v in cmd_args.items():
             if cmd_args[k]["type"] == "flag":
                 if re.search(r'.*--{}.*'.format(k), text):
@@ -64,6 +71,10 @@ class SlackArgParse:
             args_text = True
         else:
             args_text = text.strip()
+            if args_text.lower() == 'true':
+                args_text = True
+            elif args_text.lower() == 'false':
+                args_text = False
         return args_text
 
     @staticmethod
@@ -78,3 +89,17 @@ class SlackArgParse:
         for k, v in replace_chars.items():
             message = message.replace(k, v)
         return message
+
+
+if __name__ == '__main__':
+    import os
+    path = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(path, 'config.json')) as f:
+        config = json.load(f)
+    cmd_args = config['commands']['aws']['valid_args']
+    options = config['commands']['aws']['options']
+    text = 'devbot aws restart -i jke-control01'
+    parsed_args = SlackArgParse(cmd_args, options, text)
+    print(f"OPTION: {parsed_args.option}")
+    print(f"ARGS: {parsed_args.args}")
+    # print(f"FLAGS: {parsed_args.flags}")

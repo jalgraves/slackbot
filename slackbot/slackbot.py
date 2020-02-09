@@ -47,12 +47,14 @@ CONFIG = _config()
 
 class BotCommand:
     """Run a bot command issued from Slack"""
-    def __init__(self, slack_client, command, config, data):
+    def __init__(self, slack_client, command, data):
         self.client = slack_client
         self.command = command
-        self.config = config
+        self.config = CONFIG['commands'][self.command]
+        self.cmd_args = self.config['valid_args']
+        self.cmd_options = self.config['options']
         self.data = data
-        self.parsed_args = SlackArgParse(self.config['valid_args'], self.config['options'], self.data['text'])
+        self.parsed_args = SlackArgParse(self.cmd_args, self.cmd_options, self.data['text'])
         self.args = self.parsed_args.args
         self.option = self.parsed_args.option
         logging.info(f'OPTION: {self.option}')
